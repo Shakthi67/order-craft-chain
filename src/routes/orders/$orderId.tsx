@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Warehouse, Truck } from "lucide-react";
 import { getOrder } from "@/lib/demo-data";
-import { StageTimeline } from "@/components/StageTimeline";
 import { MaterialStatusBadge, OrderStageBadge } from "@/components/StatusBadge";
 import { formatDate } from "../index";
 
@@ -52,14 +51,7 @@ function OrderDetail() {
           <OrderStageBadge stage={order.stage} />
         </div>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
-          <aside className="rounded-lg border border-border bg-card p-5">
-            <h2 className="font-display text-sm font-bold uppercase tracking-wide text-muted-foreground">Production flow</h2>
-            <div className="mt-4">
-              <StageTimeline currentStage={order.stage} />
-            </div>
-          </aside>
-
+        <div className="mt-8">
           <div className="space-y-6">
             <section className="rounded-lg border border-border bg-card p-5">
               <div className="flex items-center gap-2">
