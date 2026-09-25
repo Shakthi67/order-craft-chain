@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Warehouse, Truck } from "lucide-react";
 import { getOrder } from "@/lib/demo-data";
-import { StageTimeline } from "@/components/StageTimeline";
 import { MaterialStatusBadge, OrderStageBadge } from "@/components/StatusBadge";
 import { formatDate } from "../index";
 
