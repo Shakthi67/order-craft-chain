@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Warehouse, Truck } from "lucide-react";
+import { ArrowLeft, Warehouse, Truck, Wrench } from "lucide-react";
+import { DeadlineTag } from "@/components/Deadline";
 import { getOrder } from "@/lib/demo-data";
 import { MaterialStatusBadge, OrderStageBadge } from "@/components/StatusBadge";
 import { formatDate } from "../index";
@@ -55,6 +56,44 @@ function OrderDetail() {
           <div className="space-y-6">
             <section className="rounded-lg border border-border bg-card p-5">
               <div className="flex items-center gap-2">
+                <Wrench className="h-4 w-4 text-muted-foreground" />
+                <h2 className="font-display font-bold">Part items needed</h2>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">Components that make up this part — built in-house or requested from a third party.</p>
+              <div className="mt-3 overflow-hidden rounded-md border border-border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
+                      <th className="px-3 py-2 font-medium">Item</th>
+                      <th className="px-3 py-2 font-medium">Qty</th>
+                      <th className="px-3 py-2 font-medium">Built by</th>
+                      <th className="px-3 py-2 font-medium">Deadline</th>
+                      <th className="px-3 py-2 font-medium">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {order.partItems.map((p) => (
+                      <tr key={p.id} className="border-t border-border">
+                        <td className="px-3 py-2 font-medium">{p.name}</td>
+                        <td className="px-3 py-2 text-muted-foreground">{p.quantity}</td>
+                        <td className="px-3 py-2">
+                          {p.builtBy === "in_house" ? (
+                            <span className="rounded bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">Own (in-house)</span>
+                          ) : (
+                            <span className="text-xs"><span className="rounded bg-accent px-1.5 py-0.5 font-medium text-accent-foreground">Third party</span> <span className="text-muted-foreground">{p.supplier}</span></span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2">{p.deadline ? <DeadlineTag date={p.deadline} done={p.status === "ready"} /> : <span className="text-xs text-muted-foreground">—</span>}</td>
+                        <td className="px-3 py-2 text-xs capitalize">{p.status.replace("_", " ")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section className="rounded-lg border border-border bg-card p-5">
+              <div className="flex items-center gap-2">
                 <Warehouse className="h-4 w-4 text-muted-foreground" />
                 <h2 className="font-display font-bold">Own raw material</h2>
               </div>
@@ -86,6 +125,9 @@ function OrderDetail() {
                       <p className="text-xs text-muted-foreground">
                         {m.quantity} · {m.supplier}
                       </p>
+                      {m.deadline && (
+                        <div className="mt-1"><DeadlineTag date={m.deadline} done={m.status === "received"} /></div>
+                      )}
                     </div>
                     <MaterialStatusBadge status={m.status} />
                   </li>
