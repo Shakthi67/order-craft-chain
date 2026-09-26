@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Factory, Package, Truck, ClipboardList } from "lucide-react";
 import { ORDERS, SUPPLIERS } from "@/lib/demo-data";
 import { OrderStageBadge } from "@/components/StatusBadge";
+import { NotificationsPanel } from "@/components/NotificationsPanel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -53,6 +54,8 @@ function Dashboard() {
           <StatCard icon={<Package className="h-5 w-5" />} label="Third-party materials pending" value={String(thirdPartyPending)} />
           <StatCard icon={<Truck className="h-5 w-5" />} label="Delivered this month" value={String(delivered.length)} />
         </div>
+
+        <NotificationsPanel />
 
         <section className="mt-10">
           <h2 className="font-display text-xl font-bold">Orders</h2>
