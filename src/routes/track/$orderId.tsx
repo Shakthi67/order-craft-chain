@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Factory, ArrowLeft, CheckCircle2, Clock, Circle, Mail } from "lucide-react";
 import { getOrder, daysUntil } from "@/lib/demo-data";
+import { OrderChat } from "@/components/OrderChat";
 import { formatDate } from "../index";
 
 export const Route = createFileRoute("/track/$orderId")({
@@ -95,6 +96,10 @@ function TrackOrder() {
             ))}
           </ul>
         </section>
+
+        <div className="mt-6">
+          <OrderChat order={order} mode="client" />
+        </div>
 
         <section className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-5">
           <div>
