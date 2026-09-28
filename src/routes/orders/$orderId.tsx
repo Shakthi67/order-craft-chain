@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Warehouse, Truck, Wrench } from "lucide-react";
 import { DeadlineTag } from "@/components/Deadline";
+import { OrderChat } from "@/components/OrderChat";
 import { getOrder } from "@/lib/demo-data";
 import { MaterialStatusBadge, OrderStageBadge } from "@/components/StatusBadge";
 import { formatDate } from "../index";
@@ -145,6 +146,8 @@ function OrderDetail() {
                 </ul>
               </section>
             )}
+
+            <OrderChat order={order} mode="manufacturer" />
 
             <Link
               to="/track/$orderId"
