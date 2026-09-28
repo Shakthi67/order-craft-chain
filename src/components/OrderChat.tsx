@@ -53,8 +53,8 @@ export function OrderChat({
 }) {
   const all = channelsFor(order);
   const channels = mode === "client" ? all.filter((c) => c.key === "client") : all;
-  const [active, setActive] = useState(channels[0].key);
-  const channel = channels.find((c) => c.key === active) ?? channels[0];
+  const [active, setActive] = useState(channels[0]!.key);
+  const channel = (channels.find((c) => c.key === active) ?? channels[0])!;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   // Manufacturer page can switch who is typing (demo of the other side)
