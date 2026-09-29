@@ -46,32 +46,39 @@ const storeKey = (orderId: string, ch: string) => `chat:${orderId}:${ch}`;
 export function OrderChat({
   order,
   mode,
+  supplier,
 }: {
   order: Order;
-  /** manufacturer sees all channels; client only sees the client channel */
-  mode: "manufacturer" | "client";
+  /** manufacturer sees all channels; client/supplier only see their own */
+  mode: "manufacturer" | "client" | "supplier";
+  supplier?: string;
 }) {
   const all = channelsFor(order);
-  const channels = mode === "client" ? all.filter((c) => c.key === "client") : all;
+  const channels =
+    mode === "client"
+      ? all.filter((c) => c.key === "client")
+      : mode === "supplier"
+        ? all.filter((c) => c.key === `supplier:${supplier}`)
+        : all;
   const [active, setActive] = useState(channels[0]!.key);
   const channel = (channels.find((c) => c.key === active) ?? channels[0])!;
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   // Manufacturer page can switch who is typing (demo of the other side)
-  const [speaker, setSpeaker] = useState<string>(mode === "client" ? order.client : MANUFACTURER);
+  const [speaker, setSpeaker] = useState<string>(mode === "client" ? order.client : mode === "supplier" ? supplier! : MANUFACTURER);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const raw = localStorage.getItem(storeKey(order.id, channel.key));
     setMessages(raw ? JSON.parse(raw) : seed(order, channel));
     if (mode === "manufacturer") setSpeaker(MANUFACTURER);
-  }, [order, channel.key]);
+  }, [order, channel.key, mode]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "nearest" });
   }, [messages]);
 
-  const me = mode === "client" ? order.client : speaker;
+  const me = mode === "client" ? order.client : mode === "supplier" ? supplier! : speaker;
 
   function send(e: React.FormEvent) {
     e.preventDefault();
@@ -95,7 +102,7 @@ export function OrderChat({
         <MessageSquare className="h-4 w-4 text-muted-foreground" />
         <h2 className="font-display font-bold">Messages</h2>
         <span className="text-xs text-muted-foreground">
-          {mode === "client" ? "Chat with ForgeWorks about this order" : "Talk to the client or suppliers on this order"}
+          {mode !== "manufacturer" ? "Chat with ForgeWorks about this order" : "Talk to the client or suppliers on this order"}
         </span>
       </div>
 

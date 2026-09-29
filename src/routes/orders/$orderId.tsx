@@ -149,13 +149,6 @@ function OrderDetail() {
 
             <OrderChat order={order} mode="manufacturer" />
 
-            <Link
-              to="/track/$orderId"
-              params={{ orderId: order.id }}
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
-            >
-              Open client tracking view
-            </Link>
           </div>
         </div>
       </main>
