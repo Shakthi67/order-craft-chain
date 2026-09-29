@@ -206,3 +206,15 @@ export function stageIndex(stage: OrderStage): number {
 export function getOrder(id: string): Order | undefined {
   return ORDERS.find((o) => o.id === id);
 }
+
+/** Orders waiting for manufacturer confirmation (new_order notifications) */
+export function pendingOrderIds(confirmed: string[]): Set<string> {
+  return new Set(
+    NOTIFICATIONS.filter((n) => n.kind === "new_order" && !confirmed.includes(n.id)).map((n) => n.orderId),
+  );
+}
+
+export function visibleOrders(confirmed: string[]): Order[] {
+  const pending = pendingOrderIds(confirmed);
+  return ORDERS.filter((o) => !pending.has(o.id));
+}

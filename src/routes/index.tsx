@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Factory, Package, Truck, ClipboardList } from "lucide-react";
-import { ORDERS, SUPPLIERS } from "@/lib/demo-data";
+import { SUPPLIERS, visibleOrders } from "@/lib/demo-data";
+import { useDemoState } from "@/lib/store";
 import { OrderStageBadge } from "@/components/StatusBadge";
 import { NotificationsPanel } from "@/components/NotificationsPanel";
 
@@ -19,6 +20,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
+  const { confirmed } = useDemoState();
+  const ORDERS = visibleOrders(confirmed);
   const active = ORDERS.filter((o) => o.stage !== "delivered");
   const delivered = ORDERS.filter((o) => o.stage === "delivered");
   const thirdPartyPending = ORDERS.flatMap((o) => o.materials).filter(
@@ -41,8 +44,8 @@ function Dashboard() {
           </div>
           <nav className="flex items-center gap-4 text-sm">
             <span className="font-medium text-foreground">Dashboard</span>
-            <Link to="/track/$orderId" params={{ orderId: "ORD-1042" }} className="text-muted-foreground hover:text-foreground">
-              Client view
+            <Link to="/supplier" className="text-muted-foreground hover:text-foreground">
+              Supplier portal
             </Link>
           </nav>
         </div>

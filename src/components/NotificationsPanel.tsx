@@ -1,16 +1,26 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bell, Check, X } from "lucide-react";
-import { NOTIFICATIONS, type AppNotification } from "@/lib/demo-data";
+import { NOTIFICATIONS, ORDERS, type AppNotification } from "@/lib/demo-data";
+import { confirmNotification, dismissNotification, useDemoState } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
-type State = "pending" | "confirmed" | "dismissed";
-
 export function NotificationsPanel() {
-  const [states, setStates] = useState<Record<string, State>>({});
-  const set = (id: string, s: State) => setStates((p) => ({ ...p, [id]: s }));
-  const visible = NOTIFICATIONS.filter((n) => states[n.id] !== "dismissed");
-  const pending = visible.filter((n) => n.needsConfirmation && states[n.id] !== "confirmed").length;
+  const s = useDemoState();
+  const supplierNotes: AppNotification[] = ORDERS.flatMap((o) =>
+    o.materials
+      .filter((m) => s.supplierConfirmed.includes(m.id))
+      .map((m) => ({
+        id: `sc-${m.id}`,
+        orderId: o.id,
+        kind: "supplier_confirm" as const,
+        title: `${m.supplier} confirmed request`,
+        detail: `${m.quantity} × ${m.name}${m.deadline ? `, delivery by ${m.deadline}` : ""}.`,
+        time: "Just now",
+        needsConfirmation: false,
+      })),
+  );
+  const visible = [...supplierNotes, ...NOTIFICATIONS].filter((n) => !s.dismissed.includes(n.id));
+  const pending = visible.filter((n) => n.needsConfirmation && !s.confirmed.includes(n.id)).length;
 
   return (
     <section className="mt-10">
@@ -26,15 +36,14 @@ export function NotificationsPanel() {
       <ul className="mt-4 divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
         {visible.length === 0 && <li className="p-4 text-sm text-muted-foreground">All caught up.</li>}
         {visible.map((n) => (
-          <Item key={n.id} n={n} state={states[n.id] ?? "pending"} onSet={(s) => set(n.id, s)} />
+          <Item key={n.id} n={n} confirmed={s.confirmed.includes(n.id)} />
         ))}
       </ul>
     </section>
   );
 }
 
-function Item({ n, state, onSet }: { n: AppNotification; state: State; onSet: (s: State) => void }) {
-  const confirmed = state === "confirmed";
+function Item({ n, confirmed }: { n: AppNotification; confirmed: boolean }) {
   return (
     <li className={cn("flex flex-wrap items-start justify-between gap-3 p-4", n.kind === "deadline" && !confirmed && "bg-destructive/5")}>
       <div className="min-w-0">
@@ -49,12 +58,12 @@ function Item({ n, state, onSet }: { n: AppNotification; state: State; onSet: (s
       </div>
       <div className="flex items-center gap-2">
         {n.needsConfirmation && !confirmed && (
-          <button onClick={() => onSet("confirmed")} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
+          <button onClick={() => confirmNotification(n.id)} className="inline-flex items-center gap-1 rounded-md bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
             <Check className="h-3 w-3" /> Confirm
           </button>
         )}
         {confirmed && <span className="inline-flex items-center gap-1 text-xs font-medium text-success"><Check className="h-3 w-3" /> Confirmed</span>}
-        <button onClick={() => onSet("dismissed")} aria-label="Dismiss" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted">
+        <button onClick={() => dismissNotification(n.id)} aria-label="Dismiss" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted">
           <X className="h-3.5 w-3.5" />
         </button>
       </div>
