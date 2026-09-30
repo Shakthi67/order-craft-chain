@@ -3,6 +3,7 @@ import { ArrowLeft, Warehouse, Truck, Wrench } from "lucide-react";
 import { DeadlineTag } from "@/components/Deadline";
 import { OrderChat } from "@/components/OrderChat";
 import { getOrder } from "@/lib/demo-data";
+import { materialsFor, useDemoState } from "@/lib/store";
 import { MaterialStatusBadge, OrderStageBadge } from "@/components/StatusBadge";
 import { formatDate } from "../index";
 
@@ -27,8 +28,9 @@ export const Route = createFileRoute("/orders/$orderId")({
 
 function OrderDetail() {
   const order = Route.useLoaderData();
+  const demo = useDemoState();
   const ownStock = order.materials.filter((m) => m.source === "own_stock");
-  const thirdParty = order.materials.filter((m) => m.source === "third_party");
+  const thirdParty = materialsFor(order, demo).filter((m) => m.source === "third_party");
 
   return (
     <div className="min-h-screen bg-background">

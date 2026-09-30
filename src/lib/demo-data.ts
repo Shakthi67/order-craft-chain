@@ -21,7 +21,7 @@ export interface Material {
   quantity: string;
   source: MaterialSource;
   supplier?: string;
-  deadline?: string; // third-party delivery deadline
+  deadline?: string | undefined; // third-party delivery deadline
   status: "allocated" | "requested" | "in_transit" | "received";
 }
 
@@ -31,7 +31,7 @@ export interface PartItem {
   quantity: string;
   builtBy: "in_house" | "third_party";
   supplier?: string;
-  deadline?: string;
+  deadline?: string | undefined;
   status: "pending" | "in_progress" | "ready";
 }
 
@@ -165,6 +165,28 @@ export const ORDERS: Order[] = [
   },
 ];
 
+ORDERS.push({
+  id: "ORD-1045",
+  client: "Meridian Rail",
+  clientContact: "s.iyer@meridianrail.in",
+  part: "Axle Bearing Cover",
+  quantity: 80,
+  stage: "order_received",
+  progress: 5,
+  dueDate: "2026-10-30",
+  placedDate: "2026-09-26",
+  priority: "medium",
+  partItems: [
+    { id: "p14", name: "Machined cover plate", quantity: "80 pcs", builtBy: "in_house", status: "pending" },
+    { id: "p15", name: "Oil seal", quantity: "80 pcs", builtBy: "third_party", supplier: "SealTech Pvt Ltd", deadline: "2026-10-10", status: "pending" },
+  ],
+  materials: [
+    { id: "m14", name: "Ductile Iron Plate", quantity: "400 kg", source: "own_stock", status: "allocated" },
+    { id: "m15", name: "Oil Seals 60x80", quantity: "80 pcs", source: "third_party", supplier: "SealTech Pvt Ltd", deadline: "2026-10-10", status: "requested" },
+  ],
+  notes: [],
+});
+
 export const SUPPLIERS = [
   { name: "SKF Distributors", category: "Bearings & rotary parts", openRequests: 0, onTimeRate: 98 },
   { name: "SealTech Pvt Ltd", category: "Seals & gaskets", openRequests: 1, onTimeRate: 94 },
@@ -187,6 +209,7 @@ export const NOTIFICATIONS: AppNotification[] = [
   { id: "n1", orderId: "ORD-1043", kind: "deadline", title: "Coating deadline missed", detail: "ChemCoat Industries was due Sep 25 for Anti-corrosion Coating.", time: "2h ago", needsConfirmation: true },
   { id: "n2", orderId: "ORD-1042", kind: "delivery", title: "Gasket kits dispatched", detail: "SealTech shipped 250 kits — confirm receipt on arrival.", time: "4h ago", needsConfirmation: true },
   { id: "n3", orderId: "ORD-1044", kind: "new_order", title: "New order from Apex Automotive", detail: "500 × Drive Shaft Coupling — confirm to start sourcing.", time: "Yesterday", needsConfirmation: true },
+  { id: "n5", orderId: "ORD-1045", kind: "new_order", title: "New order from Meridian Rail", detail: "80 × Axle Bearing Cover — confirm to add to orders.", time: "30m ago", needsConfirmation: true },
   { id: "n4", orderId: "ORD-1043", kind: "supplier_confirm", title: "BoltRight confirmed request", detail: "640 × M24 bolts, delivery by Oct 1.", time: "Yesterday", needsConfirmation: false },
 ];
 

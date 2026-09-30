@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Bell, Check, Truck } from "lucide-react";
 import { SUPPLIERS, visibleOrders } from "@/lib/demo-data";
-import { supplierConfirm, useDemoState } from "@/lib/store";
+import { materialsFor, supplierConfirm, useDemoState } from "@/lib/store";
 import { DeadlineTag } from "@/components/Deadline";
 import { MaterialStatusBadge } from "@/components/StatusBadge";
 import { OrderChat } from "@/components/OrderChat";
@@ -29,7 +29,7 @@ function SupplierPortal() {
   const [chatOrder, setChatOrder] = useState<string | null>(null);
 
   const orders = visibleOrders(state.confirmed)
-    .map((o) => ({ order: o, mats: o.materials.filter((m) => m.supplier === supplier) }))
+    .map((o) => ({ order: o, mats: materialsFor(o, state).filter((m) => m.supplier === supplier) }))
     .filter((x) => x.mats.length > 0);
 
   const requests = orders.flatMap(({ order, mats }) =>

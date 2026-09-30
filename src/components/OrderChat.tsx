@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { MessageSquare, Send } from "lucide-react";
 import type { Order } from "@/lib/demo-data";
 import { cn } from "@/lib/utils";
+import { materialsFor, useDemoState, type DemoState } from "@/lib/store";
 
 interface ChatMessage {
   id: string;
@@ -18,9 +19,9 @@ interface Channel {
 
 const MANUFACTURER = "ForgeWorks";
 
-export function channelsFor(order: Order): Channel[] {
+export function channelsFor(order: Order, demo?: DemoState): Channel[] {
   const suppliers = Array.from(
-    new Set(order.materials.filter((m) => m.supplier).map((m) => m.supplier as string)),
+    new Set((demo ? materialsFor(order, demo) : order.materials).filter((m) => m.supplier).map((m) => m.supplier as string)),
   );
   return [
     { key: "client", label: `Client · ${order.client}`, other: order.client },
@@ -53,15 +54,16 @@ export function OrderChat({
   mode: "manufacturer" | "client" | "supplier";
   supplier?: string;
 }) {
-  const all = channelsFor(order);
+  const demo = useDemoState();
+  const all = channelsFor(order, demo);
   const channels =
     mode === "client"
       ? all.filter((c) => c.key === "client")
       : mode === "supplier"
         ? all.filter((c) => c.key === `supplier:${supplier}`)
         : all;
-  const [active, setActive] = useState(channels[0]!.key);
-  const channel = (channels.find((c) => c.key === active) ?? channels[0])!;
+  const [active, setActive] = useState(channels[0]?.key ?? "client");
+  const channel = channels.find((c) => c.key === active) ?? channels[0] ?? { key: `supplier:${supplier}`, label: `Supplier · ${supplier}`, other: supplier ?? "" };
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState("");
   // Manufacturer page can switch who is typing (demo of the other side)
