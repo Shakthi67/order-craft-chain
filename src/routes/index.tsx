@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Factory, Package, Truck, ClipboardList } from "lucide-react";
 import { SUPPLIERS, visibleOrders } from "@/lib/demo-data";
 import { useDemoState } from "@/lib/store";
+import { SendRequestForm } from "@/components/SendRequestForm";
 import { OrderStageBadge } from "@/components/StatusBadge";
 import { NotificationsPanel } from "@/components/NotificationsPanel";
 
@@ -20,7 +21,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Dashboard() {
-  const { confirmed } = useDemoState();
+  const state = useDemoState();
+  const { confirmed } = state;
   const ORDERS = visibleOrders(confirmed);
   const active = ORDERS.filter((o) => o.stage !== "delivered");
   const delivered = ORDERS.filter((o) => o.stage === "delivered");
@@ -112,6 +114,8 @@ function Dashboard() {
           </div>
         </section>
 
+        <SendRequestForm orders={ORDERS.filter((o) => o.stage !== "delivered")} />
+
         <section className="mt-10">
           <h2 className="font-display text-xl font-bold">Third-party suppliers</h2>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -124,7 +128,7 @@ function Dashboard() {
                 <p className="text-xs text-muted-foreground">{s.category}</p>
                 <div className="mt-3 flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    {s.openRequests > 0 ? `${s.openRequests} open request${s.openRequests > 1 ? "s" : ""}` : "No open requests"}
+                    {(() => { const n = s.openRequests + state.requests.filter((r) => r.supplier === s.name && !state.supplierConfirmed.includes(r.id)).length; return n > 0 ? `${n} open request${n > 1 ? "s" : ""}` : "No open requests"; })()}
                   </span>
                   <span className="font-mono font-medium text-success">{s.onTimeRate}% on-time</span>
                 </div>

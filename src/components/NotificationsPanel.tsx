@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Bell, Check, X } from "lucide-react";
 import { NOTIFICATIONS, ORDERS, type AppNotification } from "@/lib/demo-data";
-import { confirmNotification, dismissNotification, useDemoState } from "@/lib/store";
+import { confirmNotification, dismissNotification, materialsFor, useDemoState } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
 export function NotificationsPanel() {
   const s = useDemoState();
   const supplierNotes: AppNotification[] = ORDERS.flatMap((o) =>
-    o.materials
+    materialsFor(o, s)
       .filter((m) => s.supplierConfirmed.includes(m.id))
       .map((m) => ({
         id: `sc-${m.id}`,
@@ -62,7 +62,7 @@ function Item({ n, confirmed }: { n: AppNotification; confirmed: boolean }) {
             <Check className="h-3 w-3" /> Confirm
           </button>
         )}
-        {confirmed && <span className="inline-flex items-center gap-1 text-xs font-medium text-success"><Check className="h-3 w-3" /> Confirmed</span>}
+        {confirmed && <span className="inline-flex items-center gap-1 text-xs font-medium text-success"><Check className="h-3 w-3" /> {n.kind === "new_order" ? "Added to orders" : "Confirmed"}</span>}
         <button onClick={() => dismissNotification(n.id)} aria-label="Dismiss" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted">
           <X className="h-3.5 w-3.5" />
         </button>
