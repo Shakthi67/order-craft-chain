@@ -118,7 +118,7 @@ function SupplierPortal() {
                     </li>
                   ))}
                 </ul>
-                <button onClick={() => setChatOrder(order.id)} className="mt-3 text-xs font-medium hover:underline">
+                <button onClick={() => { setChatOrder(order.id); setTimeout(() => document.getElementById("supplier-chat")?.scrollIntoView({ behavior: "smooth", block: "start" }), 50); }} className="mt-3 text-xs font-medium hover:underline">
                   Open chat →
                 </button>
               </div>
@@ -127,7 +127,7 @@ function SupplierPortal() {
         </section>
 
         {activeChat && (
-          <div className="mt-10">
+          <div id="supplier-chat" className="mt-10 scroll-mt-4">
             <p className="mb-2 font-mono text-xs text-muted-foreground">Chat · {activeChat.id}</p>
             <OrderChat key={`${supplier}-${activeChat.id}`} order={activeChat} mode="supplier" supplier={supplier} />
           </div>
