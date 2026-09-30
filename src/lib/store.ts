@@ -13,7 +13,7 @@ export interface CustomRequest {
   supplier: string;
   name: string;
   quantity: string;
-  deadline?: string;
+  deadline?: string | undefined;
 }
 
 const KEY = "forgeworks:state";

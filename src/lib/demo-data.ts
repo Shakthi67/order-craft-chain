@@ -21,7 +21,7 @@ export interface Material {
   quantity: string;
   source: MaterialSource;
   supplier?: string;
-  deadline?: string; // third-party delivery deadline
+  deadline?: string | undefined; // third-party delivery deadline
   status: "allocated" | "requested" | "in_transit" | "received";
 }
 
@@ -31,7 +31,7 @@ export interface PartItem {
   quantity: string;
   builtBy: "in_house" | "third_party";
   supplier?: string;
-  deadline?: string;
+  deadline?: string | undefined;
   status: "pending" | "in_progress" | "ready";
 }
 
